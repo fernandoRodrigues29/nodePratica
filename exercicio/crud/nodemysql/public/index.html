@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html ng-app="helloWorld">
+<head>
+	<title>HelloWord</title>
+	 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+	<link rel="stylesheet" type="text/css" href="bootstrap.css">
+	<script src="bootstrap.js"></script>
+	<script src="angular.min.js"></script>
+
+	<script>
+		angular.module("helloWorld",[]);
+		angular.module("helloWorld").controller("formularioCtrl",function($scope,$http){
+			$scope.message = "oi tudo bem";
+			$scope.showForm = false;
+			$scope.contatos = [
+				{nome:"fernando",telefone:"33333"},
+				{nome:"rodrigues",telefone:"22222"},
+				{nome:"silva",telefone:"55555"}
+			];
+
+			$scope.cadastar = function(contato){
+				console.log(contato);
+				$http.post("http://localhost:3000/cadCliente",contato).then(function(retorno){
+					carregar();
+				});
+			};
+			var carregar = function(){
+				$http({
+					method: 'GET',
+					url: 'http://localhost:3000/clientes'
+				}).then(function(response){
+					data = response.data;
+					$scope.contatos=data;
+				},
+				function (error){
+					console.log(error, 'não consegue né moises?!')
+				});
+			};
+			
+			$scope.excluirContatos = function(contatos){
+				var contatosExcluir = contatos.filter(function (contato){
+					if(contato.excluir){
+						var idRetorno = contato.ID;
+							$http({
+								method: 'DELETE',
+								url: 'http://localhost:3000/clientes/'+idRetorno
+							}).then(function(response){
+								carregar();
+							},
+							function(error){
+								console.log(error,'erro na exclusão!');
+							});
+					} 
+				});
+				
+			};
+
+			$scope.excluir = function(contato){
+				console.log(contato.ID);
+				$http({
+					method: 'DELETE',
+					url:'http://localhost:3000/clientes/'+contato.ID
+				}).then(function(response){
+					carregar();
+				},
+				function(error){
+					console.log(error,'error ao excluir!');
+				});
+			};
+			//esconder o botão de excluir
+			$scope.isSelecionadoExcluir = function(contatos){
+				return contatos.some(function(contato){
+					return contato.excluir;
+				});
+			};
+			
+			$scope.editarL = function(contato){
+				var id = contato.ID;
+				var nome = contato.Nome;
+				var cpf = contato.CPF;
+				$scope.formEdit = [{id:id,nome:nome,cpf:cpf}];
+					//$scope.showForm =	true;
+			};
+			$scope.editar = function(contato){
+				var id = contato.id;
+				var jRetorno =[{nome:contato.nome,cpf:contato.cpf}];
+				console.log(jRetorno);
+				$http.patch("http://localhost:3000/clientes/"+id,jRetorno).then(function(retorno){
+					$scope.showForm = false;
+					carregar();
+				},function(error){
+					console.log(error,'error na atualização')
+				});
+				//$scope.showForm =	false;
+			};
+			carregar();
+		});
+	</script>
+</head>
+<body ng-controller="formularioCtrl">
+<div class="row">
+</div>
+<!--
+<div ng-show="!showForm">
+-->
+<div>
+<div class="row">
+	<div class="col-lg-6 col-lg-offset-3">
+		<table class="table">
+			<tr>
+				<th>X</th>
+				<th>#</th>
+				<th>Nome</th>
+				<th>CPF</th>
+				<th>edit</th>
+				
+			</tr>
+			<tr ng-repeat="contato in contatos">
+				<td ><input type="checkbox" name="" placeholder="X" ng-model="contato.excluir"></td>
+				<td>{{contato.ID}}</td>
+				<td>{{contato.Nome}}</td>
+				<td>{{contato.CPF}}</td>
+				<td ><button data-toggle="modal" data-target="#myModal" class="btn-warning btn-block" ng-click="editarL(contato)">editar</button> </td>
+				<td ><button class="btn-danger btn-block" ng-click="excluir(contato)">excluir</button> </td>
+				
+			</tr>
+	</table>		
+	</div>
+</div>
+
+<div class="row">
+	<div class="col-lg-12">
+		<div class="col-lg-6 col-lg-offset-3">
+			<form>
+			  <input class="form-control" type="text" name="nome" ng-model="form.nome" placeholder="nome">
+		      <input class="form-control" type="text" name="tel" ng-model="form.cpf" placeholder="cpf">
+		      <button class="btn-lg btn-warning btn-block" ng-click="cadastar(form)">cadastrar</button>
+		       <button class="btn-lg btn-danger btn-block" ng-if="isSelecionadoExcluir(contatos)" ng-click="excluirContatos(contatos)">excluir</button>
+		    </form>
+		   
+		</div>
+	</div>
+</div>
+</div>
+<!--MODAL-->
+  <div class="modal fade" id="myModal" role="dialog">
+    <div class="modal-dialog">
+    
+      <!-- Modal content-->
+      <div class="modal-content">
+        <div class="modal-header">
+          <button type="button" class="close" data-dismiss="modal">&times;</button>
+          <h4 class="modal-title">Editar</h4>
+        </div>
+        <div class="modal-body">
+          
+          	<form ng-repeat="item in formEdit">
+			  <input class="form-control" type="hidden" name="id" ng-model="item.id" ng-value="item.id" >	
+			  <input class="form-control" type="text" name="nome" ng-model="item.nome"  ng-value="item.nome"  placeholder="nome">
+			  <input class="form-control" type="text" name="tel" ng-model="item.cpf"  ng-value="item.cpf" placeholder="cpf">	
+			  <button class="btn-lg btn-info btn-block" ng-click="editar(item)">editar</button>
+		    </form>
+
+           <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>	
+        </div>
+      </div>
+      
+    </div>
+  </div>
+<!---->
+
+
+</body>
+</html>

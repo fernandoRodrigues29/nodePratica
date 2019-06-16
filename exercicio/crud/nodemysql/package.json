@@ -1,0 +1,16 @@
+{
+  "name": "nodemysql",
+  "version": "1.0.0",
+  "description": "tutorial de node com mysql",
+  "main": "index.js",
+  "script": {
+    "test": "echo \"Error: no teste specified\" && exit 1"
+  },
+  "author": "fernando_rs",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.18.2",
+    "express": "^4.16.2",
+    "mysql": "^2.15.0"
+  }
+}

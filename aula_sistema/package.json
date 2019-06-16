@@ -1,0 +1,10 @@
+{
+	"name":"aula07",
+	"description":"Aula de nodeJs",
+	"author":"Fernando <fernando1587@gmail.com>",
+	"version":"1.0.0",
+	"private":true,
+	"dependencies":{
+		"mongoose":"*"
+	}
+}

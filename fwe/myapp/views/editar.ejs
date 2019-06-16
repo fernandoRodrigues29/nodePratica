@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+	<title>Princial</title>
+	<link rel="stylesheet" type="text/css" href="/stylesheets/bootstrap.min.css">
+</head>
+<body>
+
+    <div class="container">
+   <p><%= title %></p>
+   <p><%= task %></p>
+      <div class="starter-template">
+        <form action="/atualizarPOST" method="post">
+        	<input type="hidden" name="id" value="<%= task._id %>">
+          <legend>Incluir novo Registro</legend>
+        	<div class="input-group">
+        	<input type="text" name="title" placeholder="Titulo" value="<%= task.title %>">
+        	</div>
+        	<div class="input-group">
+        	<textarea name="description" id="" cols="30" rows="10" placeholder="descrição"><%= task.description %></textarea>
+        	</div>
+        	<div class="input-group">
+        	<button>Atualizar</button>
+        	</div>
+        </form>
+       
+      </div>
+    </div>
+ <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.12.4/jquery.min.js"></script>
+</body>
+</html>
